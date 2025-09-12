@@ -79,6 +79,17 @@ public class PlacedEggManager {
         eggLocations.remove(location.getBlock().getLocation());
     }
 
+    /**
+     * [신규] 설치된 드래곤 알의 위치를 반환합니다.
+     * @return 설치된 알의 위치. 없으면 null을 반환합니다.
+     */
+    public Location getPlacedEggLocation() {
+        if (eggLocations.isEmpty()) {
+            return null;
+        }
+        return eggLocations.iterator().next();
+    }
+
     private void startSoundTask() {
         this.soundTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             new HashSet<>(eggLocations).forEach(loc -> {

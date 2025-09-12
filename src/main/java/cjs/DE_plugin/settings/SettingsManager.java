@@ -13,14 +13,16 @@ public class SettingsManager {
     public static final String ENDER_PEARL_BANNED = "ban.ender-pearl";
     public static final String ENDER_CHEST_BANNED = "ban.ender-chest";
     public static final String SHIELD_BANNED = "ban.shield";
+    public static final String TRIDENT_BANNED = "ban.trident";
     public static final String TOTEM_BANNED = "ban.totem";
     public static final String EXPLOSION_DAMAGE_MULTIPLIER = "explosion-damage-multiplier";
     public static final String HIDE_ADVANCEMENTS = "world-rules.hide-advancements";
     public static final String HIDE_COORDINATES = "world-rules.hide-coordinates";
     public static final String HIDE_FOOTPRINTS_AT_NIGHT = "world-rules.hide-footprints-at-night";
+    public static final String POTION_LIMIT = "potion-limit";
+    // [신규] 경험치 배율 설정
     public static final String PLAYER_EXP_DROP_MULTIPLIER = "player-exp-drop-multiplier";
-    public static final String POTION_LIMIT = "potion-limit"; // [수정] 드래곤 경험치 설정 키 이름 변경
-    public static final String RESPAWNED_DRAGON_EXP_LEVEL = "respawned-dragon-exp-level";
+    public static final String RESPAWNED_DRAGON_EXP_MULTIPLIER = "respawned-dragon-exp-multiplier";
     public static final String EGG_FOOTPRINT_DURATION_DAYS = "dragon-egg-footprint-duration-days";
     public static final String GAME_PLAY_TIME_DAYS = "game-play-time-days";
     public static final String WORLDBORDER_OVERWORLD_SIZE = "worldborder.overworld-size";
@@ -42,6 +44,12 @@ public class SettingsManager {
     // [신규] 채팅 및 킬로그 설정 키
     public static final String CHAT_BANNED = "game-rules.chat-banned";
     public static final String KILL_LOG_DISABLED = "game-rules.kill-log-disabled";
+    public static final String LOCATION_BAR_DISABLED = "game-rules.location-bar-disabled";
+    public static final String SPAWNER_PROTECTION_ENABLED = "world-rules.spawner-protection-enabled";
+    public static final String SHOW_DAY_IN_ACTIONBAR = "game-rules.show-day-in-actionbar";
+    // [신규] 추적기 설정
+    public static final String TRACKER_ENABLED = "tracker.enabled";
+    public static final String TRACKER_LIFETIME_MINUTES = "tracker.lifetime-minutes";
 
 
     public SettingsManager(DE_plugin plugin) {
@@ -56,14 +64,16 @@ public class SettingsManager {
         config.addDefault(ENDER_PEARL_BANNED, true);
         config.addDefault(ENDER_CHEST_BANNED, true);
         config.addDefault(SHIELD_BANNED, true);
+        config.addDefault(TRIDENT_BANNED, true);
         config.addDefault(TOTEM_BANNED, true);
         config.addDefault(EXPLOSION_DAMAGE_MULTIPLIER, 0.25); // 1/4
         config.addDefault(HIDE_ADVANCEMENTS, true);
         config.addDefault(HIDE_COORDINATES, true);
         config.addDefault(HIDE_FOOTPRINTS_AT_NIGHT, true);
-        config.addDefault(PLAYER_EXP_DROP_MULTIPLIER, 1.0); // 100%
         config.addDefault(POTION_LIMIT, 2);
-        config.addDefault(RESPAWNED_DRAGON_EXP_LEVEL, 30); // [수정] 부활 드래곤 처치 시 획득할 경험치 '레벨'
+        // [신규] 경험치 배율 설정 기본값
+        config.addDefault(PLAYER_EXP_DROP_MULTIPLIER, 1.0); // 100%
+        config.addDefault(RESPAWNED_DRAGON_EXP_MULTIPLIER, 0.7); // 70%
         config.addDefault(EGG_FOOTPRINT_DURATION_DAYS, 5);
         config.addDefault(GAME_PLAY_TIME_DAYS, 100);
         config.addDefault(WORLDBORDER_OVERWORLD_SIZE, 1000);
@@ -85,6 +95,12 @@ public class SettingsManager {
         // [신규] 채팅 및 킬로그 설정 기본값
         config.addDefault(CHAT_BANNED, true);
         config.addDefault(KILL_LOG_DISABLED, true);
+        config.addDefault(LOCATION_BAR_DISABLED, true);
+        config.addDefault(SPAWNER_PROTECTION_ENABLED, true);
+        config.addDefault(SHOW_DAY_IN_ACTIONBAR, true);
+        // [신규] 추적기 설정 기본값
+        config.addDefault(TRACKER_ENABLED, true);
+        config.addDefault(TRACKER_LIFETIME_MINUTES, 5);
 
 
         config.options().copyDefaults(true);
@@ -121,7 +137,9 @@ public class SettingsManager {
 
         // --- 실시간 설정 적용 ---
         // 좌표 숨기기 설정이 변경된 경우, 월드 규칙을 다시 적용합니다.
-        if (path.equals(HIDE_COORDINATES) && plugin.getWorldRuleListener() != null) {
+        if ((path.equals(HIDE_COORDINATES) || path.equals(LOCATION_BAR_DISABLED) ||
+             path.equals(HIDE_ADVANCEMENTS) || path.equals(KILL_LOG_DISABLED))
+            && plugin.getWorldRuleListener() != null) {
             plugin.getWorldRuleListener().applyAllWorldRules();
         }
 

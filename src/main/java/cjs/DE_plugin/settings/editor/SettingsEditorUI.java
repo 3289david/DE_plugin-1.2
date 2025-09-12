@@ -61,17 +61,19 @@ public class SettingsEditorUI {
         // 숫자 설정
         sendNumberSetting(player, "주민 거래 제한", SettingsManager.VILLAGER_TRADE_LIMIT, 1);
         sendNumberSetting(player, "포션 최대 소지 수", SettingsManager.POTION_LIMIT, 1);
-        sendNumberSetting(player, "부활 드래곤 경험치(Lv)", SettingsManager.RESPAWNED_DRAGON_EXP_LEVEL, 5);
         sendNumberSetting(player, "황금사과 재생 시간(초)", SettingsManager.GOLDEN_APPLE_REGEN_DURATION_SECONDS, 1);
         sendNumberSetting(player, "게임 플레이 타임(일)", SettingsManager.GAME_PLAY_TIME_DAYS, 1);
+        sendNumberSetting(player, "추적기 수명(분)", SettingsManager.TRACKER_LIFETIME_MINUTES, 1);
 
         // 비율(소수) 설정
         sendDecimalSetting(player, "폭발 데미지 비율", SettingsManager.EXPLOSION_DAMAGE_MULTIPLIER, 0.05);
         sendDecimalSetting(player, "플레이어 경험치 드롭율", SettingsManager.PLAYER_EXP_DROP_MULTIPLIER, 0.1);
+        sendDecimalSetting(player, "부활 드래곤 경험치율", SettingsManager.RESPAWNED_DRAGON_EXP_MULTIPLIER, 0.1);
 
         // ON/OFF 설정
         sendBooleanSetting(player, "엔더 진주 금지", SettingsManager.ENDER_PEARL_BANNED);
         sendBooleanSetting(player, "엔더 상자 금지", SettingsManager.ENDER_CHEST_BANNED);
+        sendBooleanSetting(player, "삼지창 금지", SettingsManager.TRIDENT_BANNED);
         sendBooleanSetting(player, "방패 금지", SettingsManager.SHIELD_BANNED);
         sendBooleanSetting(player, "불사의 토템 금지", SettingsManager.TOTEM_BANNED);
         sendBooleanSetting(player, "발전과제 숨기기", SettingsManager.HIDE_ADVANCEMENTS);
@@ -79,6 +81,10 @@ public class SettingsEditorUI {
         sendBooleanSetting(player, "밤에 발자국 숨기기", SettingsManager.HIDE_FOOTPRINTS_AT_NIGHT);
         sendBooleanSetting(player, "채팅 금지", SettingsManager.CHAT_BANNED);
         sendBooleanSetting(player, "킬로그 비활성화", SettingsManager.KILL_LOG_DISABLED);
+        sendBooleanSetting(player, "로케이션 바 비활성화", SettingsManager.LOCATION_BAR_DISABLED);
+        sendBooleanSetting(player, "스포너 파괴 방지", SettingsManager.SPAWNER_PROTECTION_ENABLED);
+        sendBooleanSetting(player, "액션바에 날짜 표시", SettingsManager.SHOW_DAY_IN_ACTIONBAR);
+        sendBooleanSetting(player, "추적기 활성화", SettingsManager.TRACKER_ENABLED);
         sendBooleanSetting(player, "네더라이트 형판 조합", SettingsManager.CRAFT_NETHERITE_TEMPLATE_ENABLED);
 
         player.sendMessage("§e===================================");

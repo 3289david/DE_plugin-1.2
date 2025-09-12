@@ -25,12 +25,13 @@ public class MainCommand implements CommandExecutor {
     private static final List<String> GENERAL_SETTINGS_KEYS = Arrays.asList(
             SettingsManager.VILLAGER_TRADE_LIMIT,
             SettingsManager.POTION_LIMIT,
-            SettingsManager.RESPAWNED_DRAGON_EXP_LEVEL,
+            SettingsManager.PLAYER_EXP_DROP_MULTIPLIER,
+            SettingsManager.RESPAWNED_DRAGON_EXP_MULTIPLIER,
             SettingsManager.GAME_PLAY_TIME_DAYS,
             SettingsManager.EXPLOSION_DAMAGE_MULTIPLIER,
-            SettingsManager.PLAYER_EXP_DROP_MULTIPLIER,
             SettingsManager.ENDER_PEARL_BANNED,
             SettingsManager.ENDER_CHEST_BANNED,
+            SettingsManager.TRIDENT_BANNED,
             SettingsManager.SHIELD_BANNED,
             SettingsManager.TOTEM_BANNED,
             SettingsManager.HIDE_ADVANCEMENTS,
@@ -38,6 +39,11 @@ public class MainCommand implements CommandExecutor {
             SettingsManager.HIDE_FOOTPRINTS_AT_NIGHT,
             SettingsManager.CHAT_BANNED,
             SettingsManager.KILL_LOG_DISABLED,
+            SettingsManager.LOCATION_BAR_DISABLED,
+            SettingsManager.SPAWNER_PROTECTION_ENABLED,
+            SettingsManager.SHOW_DAY_IN_ACTIONBAR,
+            SettingsManager.TRACKER_ENABLED,
+            SettingsManager.TRACKER_LIFETIME_MINUTES,
             SettingsManager.GOLDEN_APPLE_REGEN_DURATION_SECONDS,
             SettingsManager.CRAFT_NETHERITE_TEMPLATE_ENABLED
     );

@@ -3,10 +3,10 @@ package cjs.DE_plugin.settings.apply;
 import cjs.DE_plugin.settings.SettingsManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityResurrectEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,11 +18,6 @@ public class BannedItemsListener implements Listener {
         this.sm = settingsManager;
     }
 
-    private void sendBannedMessage(Player player, Material material) {
-        player.sendMessage("§c" + material.name() + " 아이템은 현재 금지되어 있습니다.");
-    }
-
-    // 아이템 사용/설치 방지
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -30,37 +25,25 @@ public class BannedItemsListener implements Listener {
 
         if (item == null) return;
 
-        Material itemType = item.getType();
-
-        if ((itemType == Material.ENDER_PEARL && sm.getBoolean(SettingsManager.ENDER_PEARL_BANNED)) ||
-                (itemType == Material.ENDER_CHEST && sm.getBoolean(SettingsManager.ENDER_CHEST_BANNED)) ||
-                (itemType == Material.SHIELD && sm.getBoolean(SettingsManager.SHIELD_BANNED))) {
-            event.setCancelled(true);
-            sendBannedMessage(player, itemType);
-        }
-    }
-
-    // 아이템 제작 방지
-    @EventHandler
-    public void onCraftItem(CraftItemEvent event) {
-        if (event.getRecipe() == null) return;
-
-        Material resultType = event.getRecipe().getResult().getType();
-        if ((resultType == Material.ENDER_CHEST && sm.getBoolean(SettingsManager.ENDER_CHEST_BANNED)) ||
-                (resultType == Material.SHIELD && sm.getBoolean(SettingsManager.SHIELD_BANNED))) {
-            event.setCancelled(true);
-            if (event.getWhoClicked() instanceof Player) {
-                sendBannedMessage((Player) event.getWhoClicked(), resultType);
+        // 삼지창 던지기 방지
+        if (item.getType() == Material.TRIDENT && sm.getBoolean(SettingsManager.TRIDENT_BANNED)) {
+            if (event.getAction().name().contains("RIGHT_CLICK")) {
+                player.sendMessage("§c삼지창은 사용할 수 없습니다.");
+                event.setCancelled(true);
             }
         }
     }
 
-    // 불사의 토템 발동 방지
     @EventHandler
-    public void onPlayerResurrect(EntityResurrectEvent event) {
-        if (!(event.getEntity() instanceof Player)) return;
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player player)) {
+            return;
+        }
 
-        if (sm.getBoolean(SettingsManager.TOTEM_BANNED)) {
+        // 삼지창 근접 공격 방지
+        ItemStack weapon = player.getInventory().getItemInMainHand();
+        if (weapon.getType() == Material.TRIDENT && sm.getBoolean(SettingsManager.TRIDENT_BANNED)) {
+            player.sendMessage("§c삼지창은 사용할 수 없습니다.");
             event.setCancelled(true);
         }
     }

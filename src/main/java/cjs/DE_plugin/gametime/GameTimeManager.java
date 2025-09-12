@@ -2,6 +2,8 @@ package cjs.DE_plugin.gametime;
 
 import cjs.DE_plugin.DE_plugin;
 import cjs.DE_plugin.settings.apply.WorldBorderManager;
+import cjs.DE_plugin.team.Team;
+import cjs.DE_plugin.team.TeamManager;
 import cjs.DE_plugin.settings.SettingsManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
@@ -29,6 +31,7 @@ public class GameTimeManager implements Listener {
 
     private final DE_plugin plugin;
     private final SettingsManager sm;
+    private final TeamManager teamManager;
     private final File dataFile;
     private FileConfiguration dataConfig;
 
@@ -38,13 +41,16 @@ public class GameTimeManager implements Listener {
 
     private BukkitTask timerTask;
 
+    private long lastDayCheckedForExpiration = -1;
+
     // 조종 가능한 드래곤과 그 제어 태스크를 관리합니다.
     private final Map<UUID, BukkitTask> dragonControlTasks = new HashMap<>();
     private final Set<UUID> specialDragonIds = new HashSet<>();
 
-    public GameTimeManager(DE_plugin plugin) {
+    public GameTimeManager(DE_plugin plugin, TeamManager teamManager) {
         this.plugin = plugin;
         this.sm = plugin.getSettingsManager();
+        this.teamManager = teamManager;
         this.dataFile = new File(plugin.getDataFolder(), "gametime.yml");
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
@@ -111,12 +117,13 @@ public class GameTimeManager implements Listener {
         // 시간을 아침으로 설정
         World mainWorld = Bukkit.getWorlds().get(0);
         if (mainWorld != null) {
-            mainWorld.setTime(0L); // 0L은 아침(일출) 시간입니다.
+            mainWorld.setFullTime(0L); // [핵심 변경] 게임 시작 시 시간을 0일차 아침으로 초기화합니다.
         }
 
         this.isRunning = true;
         this.startTick = Bukkit.getWorlds().get(0).getFullTime();
         long gameDays = sm.getInt(SettingsManager.GAME_PLAY_TIME_DAYS);
+        this.lastDayCheckedForExpiration = mainWorld.getFullTime() / 24000L;
         this.gameEndTick = gameDays * 24000L;
 
         save();
@@ -180,13 +187,21 @@ public class GameTimeManager implements Listener {
         }
 
         if (winner != null) {
-            String title = "§f" + winner.getName() + " §6§l우승";
+            Team winningTeam = teamManager.getPlayerTeam(winner);
+            String title;
+            if (winningTeam != null) {
+                title = winningTeam.getColor() + "[" + winningTeam.getName() + "] 팀" + " §6§l우승";
+            } else {
+                title = "§f" + winner.getName() + " §6§l우승";
+            }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.sendTitle(title, "", 10, 100, 20);
             }
 
             final Player finalWinner = winner;
+
+            // 우승 세레모니는 알을 직접 들고 있던 플레이어에게만 적용
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -243,6 +258,13 @@ public class GameTimeManager implements Listener {
 
             long now = mainWorld.getFullTime();
 
+            // [핵심 변경] 날짜가 바뀔 때마다 만료된 발자국을 확인하고 제거합니다.
+            long currentDay = now / 24000L;
+            if (isRunning && currentDay > lastDayCheckedForExpiration) {
+                plugin.getFootprintManager().removeExpiredFootprints(currentDay);
+                lastDayCheckedForExpiration = currentDay;
+            }
+
             if (now >= gameEndTick) {
                 endGame();
                 this.cancel();
@@ -265,11 +287,12 @@ public class GameTimeManager implements Listener {
                     player.playSound(player.getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, volume, pitch);
                 }
             } else {
-                long currentDay = now / 24000L;
-
-                actionBarComponent = Component.text(String.format("§fDay %d", currentDay));
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    player.sendActionBar(actionBarComponent);
+                // [핵심 변경] 설정이 활성화된 경우에만 액션바에 날짜를 표시합니다.
+                if (sm.getBoolean(SettingsManager.SHOW_DAY_IN_ACTIONBAR)) {
+                    actionBarComponent = Component.text(String.format("§fDay %d", currentDay));
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        player.sendActionBar(actionBarComponent);
+                    }
                 }
             }
         }

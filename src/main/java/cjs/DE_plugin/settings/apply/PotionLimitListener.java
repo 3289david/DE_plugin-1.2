@@ -109,7 +109,7 @@ public class PotionLimitListener implements Listener {
         }
 
         // [상황 3] 외부 인벤토리의 포션을 핫바 키(1-9)로 가져오려는 경우
-        if (action == InventoryAction.HOTBAR_SWAP || action == InventoryAction.HOTBAR_MOVE_AND_READD) {
+        if (action == InventoryAction.HOTBAR_SWAP) {
             if (isPotion(currentItem) && event.getClickedInventory() != player.getInventory()) {
                 // 예외: 핫바의 아이템도 포션이면 맞바꾸기이므로 허용 (개수 변화 없음)
                 if (isPotion(player.getInventory().getItem(event.getHotbarButton()))) {

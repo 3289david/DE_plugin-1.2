@@ -1,5 +1,10 @@
 package cjs.DE_plugin;
 
+import cjs.DE_plugin.tracker.TrackerListener;
+import cjs.DE_plugin.listeners.PlayerListener;
+import cjs.DE_plugin.team.TeamManager;
+import cjs.DE_plugin.team.command.TeamCommand;
+import cjs.DE_plugin.team.command.TeamTabCompleter;
 import org.bukkit.inventory.ShapedRecipe;
 // 필요한 import 문을 추가합니다.
 import cjs.DE_plugin.dragon_egg.egg_portal_prevention.EggPortalPreventionListener;
@@ -19,11 +24,13 @@ import cjs.DE_plugin.dragon_egg.egg_death_event.EggDeathListener;
 import cjs.DE_plugin.dragon_egg.egg_storage_prevention.EggStoragePreventionListener;
 import cjs.DE_plugin.dragon_egg.egg_footprint.FootprintChunkListener;
 import cjs.DE_plugin.dragon_egg.egg_footprint.FootprintManager;
+import cjs.DE_plugin.tracker.TrackerManager;
 import cjs.DE_plugin.dragon_egg.egg_footprint.task.FootprintTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -37,6 +44,9 @@ public final class DE_plugin extends JavaPlugin {
     private GameTimeManager gameTimeManager;
     private FootprintManager footprintManager;
     private PlacedEggManager placedEggManager; // [추가]
+    private TeamManager teamManager;
+    private TrackerManager trackerManager;
+    private PlayerListener playerListener;
 
     @Override
     public void onEnable() {
@@ -44,15 +54,21 @@ public final class DE_plugin extends JavaPlugin {
 
         // --- 시스템 초기화 (리스너 및 명령어 등록 전) ---
         this.settingsManager = new SettingsManager(this);
-        this.worldRuleListener = new WorldRuleListener(this);
+        Scoreboard mainScoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        this.playerListener = new PlayerListener(this);
+        this.teamManager = new TeamManager(this, playerListener, mainScoreboard);
+        this.worldRuleListener = new WorldRuleListener(this.settingsManager);
         this.worldBorderManager = new WorldBorderManager(this);
-        this.gameTimeManager = new GameTimeManager(this);
+        this.gameTimeManager = new GameTimeManager(this, teamManager);
         this.footprintManager = new FootprintManager(this);
         this.placedEggManager = new PlacedEggManager(this); // [추가]
+        this.trackerManager = new TrackerManager(this);
 
         // --- 명령어 등록 ---
         getCommand("de").setExecutor(new MainCommand(this));
         getCommand("de").setTabCompleter(new MainTabCompleter(this.settingsManager));
+        getCommand("team").setExecutor(new TeamCommand(teamManager, gameTimeManager));
+        getCommand("team").setTabCompleter(new TeamTabCompleter(teamManager));
 
         // --- 리스너 등록 ---
         // 드래곤 알
@@ -61,7 +77,7 @@ public final class DE_plugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EggDeathListener(), this);
         getServer().getPluginManager().registerEvents(new AltarProtectionListener(this), this);
         getServer().getPluginManager().registerEvents(new EggStoragePreventionListener(), this);
-        getServer().getPluginManager().registerEvents(new FootprintChunkListener(this.footprintManager), this); // [신규] 청크 로드 시 만료된 발자국 제거
+        getServer().getPluginManager().registerEvents(new FootprintChunkListener(this.footprintManager), this);
         getServer().getPluginManager().registerEvents(new PlacedEggListener(this.placedEggManager), this); // [추가]
         // 설정 적용
         getServer().getPluginManager().registerEvents(new BannedItemsListener(this.settingsManager), this);
@@ -72,8 +88,10 @@ public final class DE_plugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EnchantmentLimitListener(this), this); // [이 줄 추가]
         getServer().getPluginManager().registerEvents(new EggPortalPreventionListener(this), this);
         getServer().getPluginManager().registerEvents(new GoldenAppleListener(this), this);
-        getServer().getPluginManager().registerEvents(new PortalTravelListener(this), this); // [신규] 지옥문 이동 리스너
+        getServer().getPluginManager().registerEvents(new SpawnerProtectionListener(this.settingsManager), this);
         getServer().getPluginManager().registerEvents(this.gameTimeManager, this);
+        getServer().getPluginManager().registerEvents(this.playerListener, this);
+        getServer().getPluginManager().registerEvents(new TrackerListener(this.trackerManager), this);
 
         // --- 작업(Task) 시작 ---
         // [핵심 변경] FootprintTask 생성 시 gameTimeManager를 전달합니다.
@@ -125,6 +143,18 @@ public final class DE_plugin extends JavaPlugin {
         return footprintManager;
     }
 
+    public PlacedEggManager getPlacedEggManager() {
+        return placedEggManager;
+    }
+
+    public TeamManager getTeamManager() {
+        return teamManager;
+    }
+
+    public TrackerManager getTrackerManager() {
+        return trackerManager;
+    }
+
     /**
      * 플러그인에서 사용할 커스텀 조합법을 등록합니다.
      */
@@ -145,6 +175,25 @@ public final class DE_plugin extends JavaPlugin {
                 recipe.setIngredient('D', Material.DIAMOND);
                 recipe.setIngredient('N', Material.NETHERITE_INGOT);
                 recipe.setIngredient('R', Material.NETHERRACK);
+
+                Bukkit.addRecipe(recipe);
+            }
+        }
+
+        // 드래곤 알 추적기 커스텀 조합법
+        if (settingsManager.getBoolean(SettingsManager.TRACKER_ENABLED)) {
+            ItemStack result = new ItemStack(Material.COMPASS);
+            NamespacedKey key = new NamespacedKey(this, "custom_dragon_egg_tracker");
+
+            if (Bukkit.getRecipe(key) == null) {
+                ShapedRecipe recipe = new ShapedRecipe(key, result);
+                recipe.shape(
+                        "DDD",
+                        "DND",
+                        "DDD"
+                );
+                recipe.setIngredient('D', Material.DIAMOND);
+                recipe.setIngredient('N', Material.NETHERITE_INGOT);
 
                 Bukkit.addRecipe(recipe);
             }
