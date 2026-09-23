@@ -56,5 +56,4 @@ processResources {
 
 tasks.jar {
     archiveFileName = 'DE_Plugin-v1.2.jar'
-    destinationDirectory = file('C:\\Users\\CJS\\Documents\\ServerEngine\\servers\\server_932855205\\plugins')
 }
