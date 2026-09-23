@@ -34,6 +34,7 @@ public class MainCommand implements CommandExecutor {
             SettingsManager.TRIDENT_BANNED,
             SettingsManager.SHIELD_BANNED,
             SettingsManager.TOTEM_BANNED,
+            SettingsManager.XRAY_BANNED,
             SettingsManager.HIDE_ADVANCEMENTS,
             SettingsManager.HIDE_COORDINATES,
             SettingsManager.HIDE_FOOTPRINTS_AT_NIGHT,

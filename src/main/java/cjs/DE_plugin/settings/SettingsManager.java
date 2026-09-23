@@ -15,6 +15,7 @@ public class SettingsManager {
     public static final String SHIELD_BANNED = "ban.shield";
     public static final String TRIDENT_BANNED = "ban.trident";
     public static final String TOTEM_BANNED = "ban.totem";
+    public static final String XRAY_BANNED = "ban.xray";
     public static final String EXPLOSION_DAMAGE_MULTIPLIER = "explosion-damage-multiplier";
     public static final String HIDE_ADVANCEMENTS = "world-rules.hide-advancements";
     public static final String HIDE_COORDINATES = "world-rules.hide-coordinates";
@@ -66,6 +67,7 @@ public class SettingsManager {
         config.addDefault(SHIELD_BANNED, true);
         config.addDefault(TRIDENT_BANNED, true);
         config.addDefault(TOTEM_BANNED, true);
+        config.addDefault(XRAY_BANNED, false);
         config.addDefault(EXPLOSION_DAMAGE_MULTIPLIER, 0.25); // 1/4
         config.addDefault(HIDE_ADVANCEMENTS, true);
         config.addDefault(HIDE_COORDINATES, false);

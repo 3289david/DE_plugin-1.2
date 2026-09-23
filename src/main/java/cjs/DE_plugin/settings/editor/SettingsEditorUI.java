@@ -76,6 +76,7 @@ public class SettingsEditorUI {
         sendBooleanSetting(player, "삼지창 금지", SettingsManager.TRIDENT_BANNED);
         sendBooleanSetting(player, "방패 금지", SettingsManager.SHIELD_BANNED);
         sendBooleanSetting(player, "불사의 토템 금지", SettingsManager.TOTEM_BANNED);
+        sendBooleanSetting(player, "엑스레이 금지", SettingsManager.XRAY_BANNED);
         sendBooleanSetting(player, "발전과제 숨기기", SettingsManager.HIDE_ADVANCEMENTS);
         sendBooleanSetting(player, "좌표 숨기기", SettingsManager.HIDE_COORDINATES);
         sendBooleanSetting(player, "밤에 발자국 숨기기", SettingsManager.HIDE_FOOTPRINTS_AT_NIGHT);
