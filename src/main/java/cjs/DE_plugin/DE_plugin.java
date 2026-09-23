@@ -47,6 +47,7 @@ public final class DE_plugin extends JavaPlugin {
     private TeamManager teamManager;
     private TrackerManager trackerManager;
     private PlayerListener playerListener;
+    private XrayProtectionManager xrayProtectionManager;
 
     @Override
     public void onEnable() {
@@ -63,6 +64,8 @@ public final class DE_plugin extends JavaPlugin {
         this.footprintManager = new FootprintManager(this);
         this.placedEggManager = new PlacedEggManager(this); // [추가]
         this.trackerManager = new TrackerManager(this);
+        this.xrayProtectionManager = new XrayProtectionManager(this);
+        this.xrayProtectionManager.applyXraySetting();
 
         // --- 명령어 등록 ---
         getCommand("de").setExecutor(new MainCommand(this));
@@ -153,6 +156,10 @@ public final class DE_plugin extends JavaPlugin {
 
     public TrackerManager getTrackerManager() {
         return trackerManager;
+    }
+
+    public XrayProtectionManager getXrayProtectionManager() {
+        return xrayProtectionManager;
     }
 
     /**

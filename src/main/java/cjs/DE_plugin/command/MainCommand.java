@@ -222,6 +222,10 @@ public class MainCommand implements CommandExecutor {
             }
             player.sendMessage("§a설정 '" + key + "'을(를) '" + valueStr + "'(으)로 변경했습니다.");
 
+            if (key.equals(SettingsManager.XRAY_BANNED)) {
+                player.sendMessage("§e참고: Anti-Xray 변경 사항은 서버를 재시작해야 완전히 적용됩니다.");
+            }
+
             // [핵심 변경] 설정 변경 후, 해당 카테고리의 설정창을 다시 열어줍니다.
             if (GENERAL_SETTINGS_KEYS.contains(key)) {
                 settingsEditorUI.openGeneralSettings(player);

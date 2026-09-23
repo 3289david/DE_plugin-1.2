@@ -149,5 +149,10 @@ public class SettingsManager {
         if ((path.equals(WORLDBORDER_OVERWORLD_SIZE) || path.equals(WORLDBORDER_NETHER_SCALE) || path.equals(WORLDBORDER_END_ENABLED)) && plugin.getWorldBorderManager() != null) {
             plugin.getWorldBorderManager().applyAllWorldBorders();
         }
+
+        // 엑스레이 금지 설정이 변경된 경우, Paper Anti-Xray 설정 파일을 동기화합니다.
+        if (path.equals(XRAY_BANNED) && plugin.getXrayProtectionManager() != null) {
+            plugin.getXrayProtectionManager().applyXraySetting();
+        }
     }
 }
