@@ -61,14 +61,14 @@ public class SettingsManager {
     // 플러그인 시작 시 기본 설정값을 config.yml에 생성
     private void loadDefaultSettings() {
         config.addDefault(VILLAGER_TRADE_LIMIT, 20);
-        config.addDefault(ENDER_PEARL_BANNED, true);
+        config.addDefault(ENDER_PEARL_BANNED, false);
         config.addDefault(ENDER_CHEST_BANNED, true);
         config.addDefault(SHIELD_BANNED, true);
         config.addDefault(TRIDENT_BANNED, true);
         config.addDefault(TOTEM_BANNED, true);
         config.addDefault(EXPLOSION_DAMAGE_MULTIPLIER, 0.25); // 1/4
         config.addDefault(HIDE_ADVANCEMENTS, true);
-        config.addDefault(HIDE_COORDINATES, true);
+        config.addDefault(HIDE_COORDINATES, false);
         config.addDefault(HIDE_FOOTPRINTS_AT_NIGHT, true);
         config.addDefault(POTION_LIMIT, 2);
         // [신규] 경험치 배율 설정 기본값
@@ -84,7 +84,7 @@ public class SettingsManager {
         config.addDefault(ENCHANT_OVER_LIMIT_COST, 35);
         // [신규] 활 무한, 갑옷 수선 비활성화 설정 기본값
         config.addDefault(ENCHANT_BOW_INFINITY_DISABLED, true);
-        config.addDefault(ENCHANT_ARMOR_MENDING_DISABLED, true);
+        config.addDefault(ENCHANT_ARMOR_MENDING_DISABLED, false);
         // [신규] 황금사과 및 형판 레시피 설정 기본값
         config.addDefault(GOLDEN_APPLE_REGEN_DURATION_SECONDS, 2);
         config.addDefault(CRAFT_NETHERITE_TEMPLATE_ENABLED, true);
